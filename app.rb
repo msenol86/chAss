@@ -67,9 +67,19 @@ post '/companies/initDB' do
   content_type :json
   coll.remove()
   if coll.find({:company_id => 1}).count == 0
-    new_id = coll.insert({:company_id => 1, :name => "Google", :address => "Pal Alto", :city => "California", :country => "USA", :email => "info@google.com", :phone_number => "1800030303", :owners_directors => ["Sergey Brin", "Larry Page"]})
+    new_id = coll.insert({:company_id => 1, :name => "Google", :address => "Pal Alto", :city => "California", :country => "USA", :email => "info@google.com", :phone_number => "1800030303", :owners_directors => {'1' => {:name => "Sergey Brin"}, '2' => {:name => "Larry Page"}}})
     coll.find_one(:_id => new_id).to_json
   end
+end
+
+# Upload Passport PDF of Owners and Directors
+put '/companies/:company_id/person/:person_id' do
+  content_type :json
+  File.open('uploads/' + params['passport_pdf_file'][:filename], "w") do |f|
+    f.write(params['passport_pdf_file'][:tempfile].read)
+  end
+  coll.update({:company_id => params[:company_id].to_i}, {"$set" => {"owners_directors.#{params[:person_id].to_i}.passport_file" => params['passport_pdf_file'][:filename]}})
+  coll.find_one({:company_id => params[:company_id].to_i}).to_json
 end
 
 post '/testParams' do
