@@ -15,7 +15,7 @@ end
 set :protection, :except => [:http_origin]
 
 coll = settings.mongo_db['chass']
-company_required_fields = ["company_id", "name", "adress", "city", "country", "owners_directors"]
+company_required_fields = ["company_id", "name", "address", "city", "country", "owners_directors"]
 company_non_required_fields = ["email", "phone_number"]
 company_all_fields = ["company_id", "name", "address", "city", "country", "email", "phone_number", "owners_directors"]
 
@@ -42,6 +42,17 @@ post '/companies' do
     if coll.find({:company_id => params[:company_id].to_i}).count == 0
       tmp = {"company_id" => params[:company_id].to_i}
       params.merge!(tmp)
+      owners_directors = params[:owners_directors]
+      c = 0
+      owners_directors = owners_directors.map do |elem|
+        c = c + 1
+        [c.to_s, {:name => elem}]
+      end
+      owners_directors.flatten!
+      owners_directors = Hash[*owners_directors]
+      owners_directors = {:owners_directors => owners_directors}
+      params.delete_if { |key, value| key == "owners_directors"}
+      params.merge!(owners_directors)
       new_id = coll.insert params
       coll.find_one(:_id => new_id).to_json
     end
@@ -67,8 +78,9 @@ post '/companies/initDB' do
   content_type :json
   coll.remove()
   if coll.find({:company_id => 1}).count == 0
-    new_id = coll.insert({:company_id => 1, :name => "Google", :address => "Pal Alto", :city => "California", :country => "USA", :email => "info@google.com", :phone_number => "1800030303", :owners_directors => {'1' => {:name => "Sergey Brin"}, '2' => {:name => "Larry Page"}}})
-    coll.find_one(:_id => new_id).to_json
+    coll.insert({:company_id => 1, :name => "Google", :address => "Pal Alto", :city => "California", :country => "USA", :email => "info@google.com", :phone_number => "1800030303", :owners_directors => {'1' => {:name => "Sergey Brin"}, '2' => {:name => "Larry Page"}}})
+    coll.insert({:company_id => 2, :name => "Apple", :address => "Infinite Loop", :city => "California", :country => "USA", :email => "info@apple.com", :phone_number => "1804345", :owners_directors => {'1' => {:name => "Steve Jobs"}}})
+    coll.find.to_a.to_json
   end
 end
 
