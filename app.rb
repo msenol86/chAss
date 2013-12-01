@@ -29,7 +29,7 @@ db.collection_names.each { |name| puts name }
 
 set :protection, :except => [:http_origin]
 
-coll = settings.mongo_db['chass']
+coll = db['chass']
 company_required_fields = ["company_id", "name", "address", "city", "country", "owners_directors"]
 company_non_required_fields = ["email", "phone_number"]
 company_all_fields = ["company_id", "name", "address", "city", "country", "email", "phone_number", "owners_directors"]
