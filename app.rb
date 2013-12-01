@@ -6,21 +6,26 @@ require 'json/ext'
 
 include Mongo
 
-def get_connection
-  return @db_connection if @db_connection
-  db = URI.parse(ENV['MONGOHQ_URL'])
-  db_name = db.path.gsub(/^\//, '')
-  @db_connection = Mongo::Connection.new(db.host, db.port).db(db_name)
-  @db_connection.authenticate(db.user, db.password) unless (db.user.nil? || db.user.nil?)
-  @db_connection
-end
-
-
-configure do
-  conn = get_connection
-  set :mongo_connection, conn
-  set :mongo_db, conn.db('chass')
-end
+#def get_connection
+#  return @db_connection if @db_connection
+#  db = URI.parse(ENV['MONGOHQ_URL'])
+#  db_name = db.path.gsub(/^\//, '')
+#  @db_connection = Mongo::Connection.new(db.host, db.port).db(db_name)
+#  @db_connection.authenticate(db.user, db.password) unless (db.user.nil? || db.user.nil?)
+#  @db_connection
+#end
+#
+#
+#configure do
+#  conn = get_connection
+#  set :mongo_connection, conn
+#  set :mongo_db, conn.db('chass')
+#end
+mongo_uri = ENV['MONGOHQ_URL']
+db_name = mongo_uri[%r{/([^/\?]+)(\?|$)}, 1]
+client = MongoClient.from_uri(mongo_uri)
+db = client.db(db_name)
+db.collection_names.each { |name| puts name }
 
 set :protection, :except => [:http_origin]
 
