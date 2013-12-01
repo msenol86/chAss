@@ -1,22 +1,22 @@
-Initialize DB:
-curl -X POST localhost:9393/companies/initDB -d ''
+﻿Initialize DB:
+curl -X POST http://shielded-shore-1978.herokuapp.com/companies/initDB -d ''
 
 
 Get All Companies:
-curl -X GET localhost:9393/companies
+curl -X GET http://shielded-shore-1978.herokuapp.com/companies
 
 
 Get Company with id 1:
-curl -X GET localhost:9393/companies/1
+curl -X GET http://shielded-shore-1978.herokuapp.com/companies/1
 
 
 Update Company with id 1:
-CURL -X PUT localhost:9393/companies/1 -d country=Denmark -d city=Copenhagen
+CURL -X PUT http://shielded-shore-1978.herokuapp.com/companies/1 -d country=Denmark -d city=Copenhagen
 
 
 Create New Company:
-CURL -X POST localhost:9393/companies -d company_id=3 -d name=Dell -d address="Smith Street" -d country=USA -d city=Detroit -d owners_directors[]="Mucahit Senol" -d owners_directors[]="Yang Li"
+CURL -X POST http://shielded-shore-1978.herokuapp.com/companies -d company_id=3 -d name=Dell -d address="Smith Street" -d country=USA -d city=Detroit -d owners_directors[]="Mucahit Senol" -d owners_directors[]="Yang Li"
 
 
 Upload Passport File for Company with id 1 and Owner number 2:
-curl -X PUT -F "passport_pdf_file=@/Users/msenol/Desktop/test.jpg" localhost:9393/companies/1/person/2
+curl -X PUT -F "passport_pdf_file=@/Users/msenol/Desktop/test.jpg" http://shielded-shore-1978.herokuapp.com/companies/1/person/2
